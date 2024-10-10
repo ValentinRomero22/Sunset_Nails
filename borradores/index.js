@@ -1,52 +1,27 @@
-let currentIndex = 0;
-let slides = document.querySelectorAll('.carousel-slide img');
-let dots = document.querySelectorAll('.dot');
-let autoPlayInterval;
+document.addEventListener('DOMContentLoaded', function() {
+    const prevButton = document.querySelector('.carousel-control.prev');
+    const nextButton = document.querySelector('.carousel-control.next');
+    const carouselInner = document.querySelector('.carousel-inner');
+    const items = document.querySelectorAll('.carousel-item');
+    let currentIndex = 0;
 
-// Inicializa la primera imagen y activa el primer punto.
-showSlide(currentIndex);
-
-// Control para avanzar o retroceder entre las imágenes.
-function moveSlide(n) {
-    currentIndex += n;
-    if (currentIndex >= slides.length) {
-        currentIndex = 0;
-    } else if (currentIndex < 0) {
-        currentIndex = slides.length - 1;
+    function updateCarousel() {
+        const offset = -currentIndex * 100; // Move by the width of one item (100%)
+        carouselInner.style.transform = `translateX(${offset}%)`;
     }
-    showSlide(currentIndex);
-    resetAutoPlay(); // Reinicia el autoplay cuando se cambia manualmente.
-}
 
-// Control para seleccionar una imagen específica mediante los puntos.
-function currentSlide(n) {
-    currentIndex = n - 1;
-    showSlide(currentIndex);
-    resetAutoPlay();
-}
-
-// Función principal para mostrar la imagen correcta y activar el punto correspondiente.
-function showSlide(n) {
-    document.querySelector('.carousel-slide').style.transform = `translateX(-${n * 100}%)`;
-    dots.forEach((dot, index) => {
-        dot.className = (index === n) ? 'dot active' : 'dot';
+    prevButton.addEventListener('click', function() {
+        currentIndex = (currentIndex > 0) ? currentIndex - 1 : items.length - 1;
+        updateCarousel();
     });
-}
 
-// Función de autoplay, que cambia la imagen automáticamente.
-function autoPlay() {
-    currentIndex++;
-    if (currentIndex >= slides.length) {
-        currentIndex = 0;
-    }
-    showSlide(currentIndex);
-}
+    nextButton.addEventListener('click', function() {
+        currentIndex = (currentIndex < items.length - 1) ? currentIndex + 1 : 0;
+        updateCarousel();
+    });
 
-// Inicia el autoplay cada 3 segundos.
-autoPlayInterval = setInterval(autoPlay, 3000);
-
-// Función para reiniciar el autoplay cuando se cambia de imagen manualmente.
-function resetAutoPlay() {
-    clearInterval(autoPlayInterval);
-    autoPlayInterval = setInterval(autoPlay, 3000);
-}
+    // Optional: Auto-slide functionality
+    setInterval(function() {
+        nextButton.click();
+    }, 5000); // Change the interval time as needed
+});
